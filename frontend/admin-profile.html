@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Profile - Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="brand-text">
+        <div class="title">Digital Notice Board</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="admin-dashboard.html"><i class="fa-solid fa-house icon"></i> Dashboard</a></li>
+        <li><a href="admin-notices.html"><i class="fa-solid fa-bullhorn icon"></i> Notices</a></li>
+        <li><a href="admin-add-notice.html"><i class="fa-solid fa-circle-plus icon"></i> Add Notice</a></li>
+        <li><a href="admin-departments.html"><i class="fa-solid fa-building-columns icon"></i> Departments</a></li>
+        <li><a href="admin-students.html"><i class="fa-solid fa-user-group icon"></i> Students</a></li>
+        <li><a href="admin-profile.html" class="active"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+        <li><a href="admin-settings.html"><i class="fa-solid fa-gear icon"></i> Settings</a></li>
+        <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket icon"></i> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>My Profile</h1>
+        <p class="welcome-sub">View and update your profile details.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-bell"><i class="fa-solid fa-bell"></i></div>
+        <div class="avatar-circle" id="avatarInitial">A</div>
+      </div>
+    </div>
+
+    <div class="page-card" style="max-width: 560px;">
+
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:28px;">
+        <div class="avatar-circle" style="width:64px; height:64px; font-size:24px;" id="profileAvatar">A</div>
+        <div>
+          <div style="font-weight:700; font-size:16px;" id="profileNameDisplay">Loading...</div>
+          <div style="font-size:13px; color:var(--color-text-secondary);">Administrator</div>
+        </div>
+      </div>
+
+      <div id="profileError" class="form-error"></div>
+      <div id="profileSuccess" class="form-error" style="background: var(--color-success-bg); color: var(--color-success);"></div>
+
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="profileName">Full Name</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-user icon"></i>
+            <input type="text" id="profileName" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="profileEmail">Email Address</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-envelope icon"></i>
+            <input type="email" id="profileEmail" disabled style="background: var(--color-bg); color: var(--color-text-secondary);" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="profilePhone">Phone Number</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-phone icon"></i>
+            <input type="tel" id="profilePhone" pattern="[0-9]{10}" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="profileSubmitBtn" style="width:100%; justify-content:center; margin-top:10px;">
+          <i class="fa-solid fa-check"></i> Update Profile
+        </button>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

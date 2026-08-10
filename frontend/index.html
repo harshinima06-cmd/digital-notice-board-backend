@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .landing-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+  }
+  .landing-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  .landing-page h1 { font-size: 32px; margin-bottom: 8px; }
+  .landing-page p { color: var(--color-text-secondary); margin-bottom: 36px; }
+  .role-cards { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+  .role-card {
+    width: 220px;
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s ease;
+  }
+  .role-card:hover { transform: translateY(-4px); }
+  .role-card i { font-size: 34px; color: var(--color-primary); margin-bottom: 14px; }
+  .role-card h3 { margin-bottom: 6px; }
+  .role-card p { font-size: 13px; margin-bottom: 18px; }
+</style>
+</head>
+<body>
+
+<div class="landing-page">
+  <div class="landing-icon"><i class="fa-solid fa-bell"></i></div>
+  <h1>Digital Notice Board</h1>
+  <p>Centralized &bull; Secure &bull; Simple &mdash; College Notice Management System</p>
+
+  <div class="role-cards">
+    <a href="admin-login.html" class="role-card">
+      <i class="fa-solid fa-user-shield"></i>
+      <h3>Admin</h3>
+      <p>Manage notices, students &amp; departments</p>
+      <span class="btn-primary">Continue as Admin</span>
+    </a>
+
+    <a href="student-login.html" class="role-card">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <h3>Student</h3>
+      <p>View notices &amp; announcements</p>
+      <span class="btn-primary">Continue as Student</span>
+    </a>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Departments - Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="brand-text">
+        <div class="title">Digital Notice Board</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="admin-dashboard.html"><i class="fa-solid fa-house icon"></i> Dashboard</a></li>
+        <li><a href="admin-notices.html"><i class="fa-solid fa-bullhorn icon"></i> Notices</a></li>
+        <li><a href="admin-add-notice.html"><i class="fa-solid fa-circle-plus icon"></i> Add Notice</a></li>
+        <li><a href="admin-departments.html" class="active"><i class="fa-solid fa-building-columns icon"></i> Departments</a></li>
+        <li><a href="admin-students.html"><i class="fa-solid fa-user-group icon"></i> Students</a></li>
+        <li><a href="admin-profile.html"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+        <li><a href="admin-settings.html"><i class="fa-solid fa-gear icon"></i> Settings</a></li>
+        <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket icon"></i> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>Departments</h1>
+        <p class="welcome-sub">Add, view or manage college departments.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-bell"><i class="fa-solid fa-bell"></i></div>
+        <div class="avatar-circle" id="avatarInitial">A</div>
+      </div>
+    </div>
+
+    <!-- ---------- Add Department bar ---------- -->
+    <div class="table-card" style="margin-bottom: 20px;">
+      <div style="display:flex; gap:14px; align-items:center;">
+        <div class="input-wrap" style="flex:1; max-width:320px;">
+          <i class="fa-solid fa-building icon"></i>
+          <input type="text" id="newDeptName" placeholder="Enter department name (e.g. CSE, IT)" />
+        </div>
+        <button class="btn-primary" id="addDeptBtn"><i class="fa-solid fa-plus"></i> Add Department</button>
+      </div>
+      <div id="deptFormError" class="form-error" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- ---------- Departments table ---------- -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Department Name</th>
+            <th>Created On</th>
+          </tr>
+        </thead>
+        <tbody id="departmentsTableBody">
+          <tr>
+            <td colspan="2" class="empty-state">Loading departments...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

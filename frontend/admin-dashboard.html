@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Dashboard - Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="brand-text">
+        <div class="title">Digital Notice Board</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="admin-dashboard.html" class="active"><i class="fa-solid fa-house icon"></i> Dashboard</a></li>
+        <li><a href="admin-notices.html"><i class="fa-solid fa-bullhorn icon"></i> Notices</a></li>
+        <li><a href="admin-add-notice.html"><i class="fa-solid fa-circle-plus icon"></i> Add Notice</a></li>
+        <li><a href="admin-departments.html"><i class="fa-solid fa-building-columns icon"></i> Departments</a></li>
+        <li><a href="admin-students.html"><i class="fa-solid fa-user-group icon"></i> Students</a></li>
+        <li><a href="admin-profile.html"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+        <li><a href="admin-settings.html"><i class="fa-solid fa-gear icon"></i> Settings</a></li>
+        <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket icon"></i> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>Welcome, <span id="adminName">Admin</span></h1>
+        <p class="welcome-sub">Administrator</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-bell">
+          <i class="fa-solid fa-bell"></i>
+          <span class="badge" id="notifCount">0</span>
+        </div>
+        <div class="avatar-circle" id="avatarInitial">A</div>
+      </div>
+    </div>
+
+    <!-- ---------- Stat cards (values filled by admin.js via API) ---------- -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fa-solid fa-file-lines"></i></div>
+        <div class="stat-label">Total Notices</div>
+        <div class="stat-value" id="statTotalNotices">--</div>
+        <a href="admin-notices.html" class="stat-link">View all notices &rarr;</a>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-user-group"></i></div>
+        <div class="stat-label">Total Students</div>
+        <div class="stat-value" id="statTotalStudents">--</div>
+        <a href="admin-students.html" class="stat-link">View all students &rarr;</a>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fa-solid fa-building-columns"></i></div>
+        <div class="stat-label">Departments</div>
+        <div class="stat-value" id="statTotalDepartments">--</div>
+        <a href="admin-departments.html" class="stat-link">View all departments &rarr;</a>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="fa-solid fa-eye"></i></div>
+        <div class="stat-label">Today's Views</div>
+        <div class="stat-value" id="statTodayViews">--</div>
+        <a href="#" class="stat-link">View analytics &rarr;</a>
+      </div>
+    </div>
+
+    <!-- ---------- Recent notices table ---------- -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3>Recent Notices</h3>
+        <a href="admin-notices.html" class="view-all">View All</a>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Department</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="recentNoticesBody">
+          <!-- Rows injected dynamically by admin.js from /api/admin/dashboard -->
+          <tr>
+            <td colspan="5" class="empty-state">Loading recent notices...</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ---------- Quick action buttons ---------- -->
+      <div class="action-buttons-row">
+        <a href="admin-add-notice.html" class="action-btn blue"><i class="fa-solid fa-plus"></i> Add Notice</a>
+        <a href="admin-notices.html" class="action-btn green"><i class="fa-solid fa-list-check"></i> Manage Notices</a>
+        <a href="admin-students.html" class="action-btn purple"><i class="fa-solid fa-user-group"></i> Manage Students</a>
+        <a href="admin-departments.html" class="action-btn orange"><i class="fa-solid fa-building-columns"></i> Manage Departments</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

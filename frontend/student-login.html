@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Student Login - Digital Notice Board</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-card">
+
+    <!-- ===== Left decorative panel ===== -->
+    <div class="login-side">
+      <div class="brand-icon"><i class="fa-solid fa-bell"></i></div>
+      <h1>Digital <span>Notice Board</span></h1>
+      <div class="divider"></div>
+      <p>Stay updated with important announcements, events and notices from your institution.</p>
+      <div class="side-footer">A.V.C College of Engineering</div>
+    </div>
+
+    <!-- ===== Right form panel (Student can ONLY login, no signup) ===== -->
+    <div class="login-form-panel">
+      <div class="form-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <h2>Student Login</h2>
+      <p class="subtitle">Welcome back! Please login to your account.</p>
+
+      <div id="loginError" class="form-error">Invalid register number/email or password.</div>
+
+      <form id="studentLoginForm">
+        <div class="form-group">
+          <label for="loginId">Email / Register Number</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-user icon"></i>
+            <input type="text" id="loginId" placeholder="Enter your email or register number" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-lock icon"></i>
+            <input type="password" id="loginPassword" placeholder="Enter your password" required />
+            <button type="button" class="toggle-eye" data-target="loginPassword">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row-between">
+          <a href="#">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary-full" id="loginBtn">
+          Login <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="divider-or">or</div>
+
+      <div class="info-banner">
+        <div class="icon-badge"><i class="fa-solid fa-info"></i></div>
+        <div>Student account is provided by the College Administrator.</div>
+      </div>
+
+      <p class="footer-tags">
+        <i class="fa-solid fa-shield-halved"></i> Secure &bull; Reliable &bull; Always Accessible
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/student.js"></script>
+</body>
+</html>

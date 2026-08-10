@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manage Notices - Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="brand-text">
+        <div class="title">Digital Notice Board</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="admin-dashboard.html"><i class="fa-solid fa-house icon"></i> Dashboard</a></li>
+        <li><a href="admin-notices.html" class="active"><i class="fa-solid fa-bullhorn icon"></i> Notices</a></li>
+        <li><a href="admin-add-notice.html"><i class="fa-solid fa-circle-plus icon"></i> Add Notice</a></li>
+        <li><a href="admin-departments.html"><i class="fa-solid fa-building-columns icon"></i> Departments</a></li>
+        <li><a href="admin-students.html"><i class="fa-solid fa-user-group icon"></i> Students</a></li>
+        <li><a href="admin-profile.html"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+        <li><a href="admin-settings.html"><i class="fa-solid fa-gear icon"></i> Settings</a></li>
+        <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket icon"></i> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>All Notices</h1>
+        <p class="welcome-sub">View, edit, or delete all notices.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-bell"><i class="fa-solid fa-bell"></i></div>
+        <div class="avatar-circle" id="avatarInitial">A</div>
+      </div>
+    </div>
+
+    <!-- ---------- Filter / Search bar ---------- -->
+    <div class="table-card" style="margin-bottom: 20px;">
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <!-- Category filter - populated with the 11 project categories -->
+          <select id="categoryFilter" class="filter-select">
+            <option value="">All Categories</option>
+            <option value="Exam">Exam</option>
+            <option value="Scholarship">Scholarship</option>
+            <option value="Placement">Placement</option>
+            <option value="Events">Events</option>
+            <option value="Circular">Circular</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Internship">Internship</option>
+            <option value="Seminar">Seminar</option>
+            <option value="Sports">Sports</option>
+            <option value="Cultural">Cultural</option>
+            <option value="General Announcement">General Announcement</option>
+          </select>
+
+          <!-- Department filter - populated dynamically from /api/admin/department -->
+          <select id="departmentFilter" class="filter-select">
+            <option value="">All Departments</option>
+          </select>
+        </div>
+
+        <div style="display:flex; gap:14px; align-items:center;">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search notice by title..." />
+          </div>
+          <a href="admin-add-notice.html" class="btn-primary"><i class="fa-solid fa-plus"></i> Add Notice</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- Notices table ---------- -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Department</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="noticesTableBody">
+          <tr>
+            <td colspan="5" class="empty-state">Loading notices...</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div id="noticesCountLabel" style="margin-top:14px; font-size:13px; color:var(--color-text-secondary);"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ---------- Delete confirmation modal ---------- -->
+<div id="deleteModal" style="display:none; position:fixed; inset:0; background:rgba(10,15,40,0.5); align-items:center; justify-content:center; z-index:100;">
+  <div style="background:var(--color-white); border-radius:var(--radius-lg); padding:32px; width:100%; max-width:360px; text-align:center;">
+    <div style="width:56px; height:56px; border-radius:50%; background:var(--color-danger-bg); color:var(--color-danger); display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 16px;">
+      <i class="fa-solid fa-trash"></i>
+    </div>
+    <h3 style="margin-bottom:8px;">Delete this notice?</h3>
+    <p style="color:var(--color-text-secondary); font-size:14px; margin-bottom:24px;">This action cannot be undone.</p>
+    <div style="display:flex; gap:12px;">
+      <button class="btn-secondary" style="flex:1;" id="cancelDeleteBtn">Cancel</button>
+      <button class="btn-primary btn-danger" style="flex:1; justify-content:center;" id="confirmDeleteBtn">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Students - Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="brand-text">
+        <div class="title">Digital Notice Board</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="admin-dashboard.html"><i class="fa-solid fa-house icon"></i> Dashboard</a></li>
+        <li><a href="admin-notices.html"><i class="fa-solid fa-bullhorn icon"></i> Notices</a></li>
+        <li><a href="admin-add-notice.html"><i class="fa-solid fa-circle-plus icon"></i> Add Notice</a></li>
+        <li><a href="admin-departments.html"><i class="fa-solid fa-building-columns icon"></i> Departments</a></li>
+        <li><a href="admin-students.html" class="active"><i class="fa-solid fa-user-group icon"></i> Students</a></li>
+        <li><a href="admin-profile.html"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+        <li><a href="admin-settings.html"><i class="fa-solid fa-gear icon"></i> Settings</a></li>
+        <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket icon"></i> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>Students</h1>
+        <p class="welcome-sub">Add and manage student accounts.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-bell"><i class="fa-solid fa-bell"></i></div>
+        <div class="avatar-circle" id="avatarInitial">A</div>
+      </div>
+    </div>
+
+    <!-- ---------- Search + Add Student button ---------- -->
+    <div class="table-card" style="margin-bottom: 20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="studentSearchInput" placeholder="Search by name or register number..." />
+        </div>
+        <button class="btn-primary" id="openAddStudentBtn"><i class="fa-solid fa-user-plus"></i> Add Student</button>
+      </div>
+    </div>
+
+    <!-- ---------- Students table ---------- -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Register Number</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody id="studentsTableBody">
+          <tr>
+            <td colspan="4" class="empty-state">Loading students...</td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="studentsCountLabel" style="margin-top:14px; font-size:13px; color:var(--color-text-secondary);"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ---------- Add Student modal ---------- -->
+<div id="addStudentModal" style="display:none; position:fixed; inset:0; background:rgba(10,15,40,0.5); align-items:center; justify-content:center; z-index:100;">
+  <div style="background:var(--color-white); border-radius:var(--radius-lg); padding:32px; width:100%; max-width:440px;">
+    <h3 style="margin-bottom:4px;">Add New Student</h3>
+    <p style="color:var(--color-text-secondary); font-size:13px; margin-bottom:20px;">Student account is created by Admin only.</p>
+
+    <div id="studentFormError" class="form-error"></div>
+
+    <form id="addStudentForm">
+      <div class="form-group">
+        <label for="studentName">Full Name</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-user icon"></i>
+          <input type="text" id="studentName" placeholder="Full Name" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="studentRegNo">Register Number</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-id-card icon"></i>
+          <input type="text" id="studentRegNo" placeholder="e.g. 2317T101" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="studentEmail">Email Address</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-envelope icon"></i>
+          <input type="email" id="studentEmail" placeholder="student@avc.edu.in" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="studentDept">Department</label>
+        <select id="studentDept" class="filter-select" style="width:100%;" required>
+          <option value="" disabled selected>Select department</option>
+          <!-- Populated dynamically from /api/admin/department -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="studentPassword">Password</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-lock icon"></i>
+          <input type="password" id="studentPassword" placeholder="Minimum 6 characters" minlength="6" required />
+        </div>
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:20px;">
+        <button type="button" class="btn-secondary" style="flex:1;" id="closeAddStudentBtn">Cancel</button>
+        <button type="submit" class="btn-primary" style="flex:1; justify-content:center;" id="addStudentSubmitBtn">Add Student</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

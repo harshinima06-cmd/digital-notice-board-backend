@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Search Notices - Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <div class="brand-text">
+        <div class="title">Digital Notice Board</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="student-dashboard.html"><i class="fa-solid fa-house icon"></i> Dashboard</a></li>
+        <li><a href="student-notices.html"><i class="fa-solid fa-bullhorn icon"></i> General Notices</a></li>
+        <li><a href="student-department-notices.html"><i class="fa-solid fa-building-columns icon"></i> Department Notices</a></li>
+        <li><a href="student-search.html" class="active"><i class="fa-solid fa-magnifying-glass icon"></i> Search Notice</a></li>
+        <li><a href="student-bookmarks.html"><i class="fa-solid fa-bookmark icon"></i> My Bookmarks</a></li>
+        <li><a href="student-profile.html"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+        <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket icon"></i> Logout</a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer-note">
+      <i class="fa-solid fa-bullhorn"></i>
+      <span>Stay updated with all college announcements and department notices.</span>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>Search Notices</h1>
+        <p class="welcome-sub">Find notices quickly by keyword, category or date.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-bell"><i class="fa-solid fa-bell"></i></div>
+        <div class="avatar-circle" id="avatarInitial">S</div>
+      </div>
+    </div>
+
+    <!-- ---------- Search filter card ---------- -->
+    <div class="table-card" style="margin-bottom: 20px;">
+      <form id="searchForm" style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end;">
+
+        <div style="flex:2; min-width:220px;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Keyword</label>
+          <div class="search-box" style="min-width:0; width:100%;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchKeyword" placeholder="Search by title or keyword..." />
+          </div>
+        </div>
+
+        <div style="flex:1; min-width:160px;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Category</label>
+          <select id="searchCategory" class="filter-select" style="width:100%;">
+            <option value="">All Categories</option>
+            <option value="Exam">Exam</option>
+            <option value="Scholarship">Scholarship</option>
+            <option value="Placement">Placement</option>
+            <option value="Events">Events</option>
+            <option value="Circular">Circular</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Internship">Internship</option>
+            <option value="Seminar">Seminar</option>
+            <option value="Sports">Sports</option>
+            <option value="Cultural">Cultural</option>
+            <option value="General Announcement">General Announcement</option>
+          </select>
+        </div>
+
+        <div style="flex:1; min-width:140px;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">From Date</label>
+          <input type="date" id="fromDate" class="filter-select" style="width:100%;" />
+        </div>
+
+        <div style="flex:1; min-width:140px;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">To Date</label>
+          <input type="date" id="toDate" class="filter-select" style="width:100%;" />
+        </div>
+
+        <button type="submit" class="btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+      </form>
+    </div>
+
+    <!-- ---------- Results table ---------- -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3>Search Results</h3>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Department</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="searchResultsBody">
+          <tr>
+            <td colspan="5" class="empty-state">Use the filters above to search notices.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="searchResultsCount" style="margin-top:14px; font-size:13px; color:var(--color-text-secondary);"></div>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/student.js"></script>
+</body>
+</html>

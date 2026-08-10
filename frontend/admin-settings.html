@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Settings - Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="brand-text">
+        <div class="title">Digital Notice Board</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="admin-dashboard.html"><i class="fa-solid fa-house icon"></i> Dashboard</a></li>
+        <li><a href="admin-notices.html"><i class="fa-solid fa-bullhorn icon"></i> Notices</a></li>
+        <li><a href="admin-add-notice.html"><i class="fa-solid fa-circle-plus icon"></i> Add Notice</a></li>
+        <li><a href="admin-departments.html"><i class="fa-solid fa-building-columns icon"></i> Departments</a></li>
+        <li><a href="admin-students.html"><i class="fa-solid fa-user-group icon"></i> Students</a></li>
+        <li><a href="admin-profile.html"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+        <li><a href="admin-settings.html" class="active"><i class="fa-solid fa-gear icon"></i> Settings</a></li>
+        <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket icon"></i> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1>Settings</h1>
+        <p class="welcome-sub">Manage system-wide settings for the college.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-bell"><i class="fa-solid fa-bell"></i></div>
+        <div class="avatar-circle" id="avatarInitial">A</div>
+      </div>
+    </div>
+
+    <div class="page-card" style="max-width: 640px;">
+
+      <div id="settingsError" class="form-error"></div>
+      <div id="settingsSuccess" class="form-error" style="background: var(--color-success-bg); color: var(--color-success);"></div>
+
+      <form id="settingsForm">
+
+        <div class="form-group">
+          <label for="collegeName">College Name</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-building-columns icon"></i>
+            <input type="text" id="collegeName" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="collegeLogo">College Logo URL (optional)</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-image icon"></i>
+            <input type="text" id="collegeLogo" placeholder="https://example.com/logo.png" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="notificationEmail">Notification Email</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-envelope icon"></i>
+            <input type="email" id="notificationEmail" placeholder="notices@avc.edu.in" />
+          </div>
+          <p style="font-size:12px; color:var(--color-text-secondary); margin-top:6px;">
+            This is a display setting only - actual outgoing notice emails use the account configured on the server.
+          </p>
+        </div>
+
+        <div style="display:flex; gap:16px;">
+          <div class="form-group" style="flex:1;">
+            <label for="dateFormat">Date Format</label>
+            <select id="dateFormat" class="filter-select" style="width:100%;">
+              <option value="DD MMM YYYY">DD MMM YYYY (20 May 2026)</option>
+              <option value="MM/DD/YYYY">MM/DD/YYYY (05/20/2026)</option>
+              <option value="DD/MM/YYYY">DD/MM/YYYY (20/05/2026)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex:1;">
+            <label for="timeFormat">Time Format</label>
+            <select id="timeFormat" class="filter-select" style="width:100%;">
+              <option value="12 Hour (AM/PM)">12 Hour (AM/PM)</option>
+              <option value="24 Hour">24 Hour</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Allow Student Registration</div>
+            <div class="settings-row-sub">Students self-signup is disabled by design - Admin creates all accounts.</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="allowStudentRegistration" disabled />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Maintenance Mode</div>
+            <div class="settings-row-sub">Display a maintenance notice to students (feature reserved for future use).</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="maintenanceMode" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary" id="settingsSubmitBtn" style="width:100%; justify-content:center; margin-top:20px;">
+          <i class="fa-solid fa-check"></i> Save Settings
+        </button>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

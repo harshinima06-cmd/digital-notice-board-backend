@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Add Notice - Digital Notice Board</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="dashboard-wrapper">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="brand-text">
+        <div class="title">Digital Notice Board</div>
+      </div>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="admin-dashboard.html"><i class="fa-solid fa-house icon"></i> Dashboard</a></li>
+        <li><a href="admin-notices.html"><i class="fa-solid fa-bullhorn icon"></i> Notices</a></li>
+        <li><a href="admin-add-notice.html" class="active"><i class="fa-solid fa-circle-plus icon"></i> Add Notice</a></li>
+        <li><a href="admin-departments.html"><i class="fa-solid fa-building-columns icon"></i> Departments</a></li>
+        <li><a href="admin-students.html"><i class="fa-solid fa-user-group icon"></i> Students</a></li>
+        <li><a href="admin-profile.html"><i class="fa-solid fa-user icon"></i> Profile</a></li>
+        <li><a href="admin-settings.html"><i class="fa-solid fa-gear icon"></i> Settings</a></li>
+        <li><a href="#" id="logoutBtn"><i class="fa-solid fa-right-from-bracket icon"></i> Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content">
+
+    <div class="topbar">
+      <div>
+        <h1 id="formTitle">Add Notice</h1>
+        <p class="welcome-sub" id="formSubtitle">Create a new notice for students.</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-bell"><i class="fa-solid fa-bell"></i></div>
+        <div class="avatar-circle" id="avatarInitial">A</div>
+      </div>
+    </div>
+
+    <div class="page-card" style="max-width: 720px;">
+
+      <div id="formError" class="form-error"></div>
+      <div id="formSuccess" class="form-error" style="background: var(--color-success-bg); color: var(--color-success);"></div>
+
+      <form id="noticeForm">
+        <!-- Hidden field: holds the notice _id when editing (empty when adding) -->
+        <input type="hidden" id="noticeId" value="" />
+
+        <div class="form-group">
+          <label for="title">Notice Title</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-heading icon"></i>
+            <input type="text" id="title" placeholder="e.g. Internal Assessment Schedule" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <div class="input-wrap" style="align-items: flex-start; padding: 12px 14px;">
+            <textarea id="description" rows="5" required
+              style="border:none; outline:none; width:100%; resize:vertical; font-size:14px; font-family:inherit;"
+              placeholder="Write the full notice details here..."></textarea>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:16px;">
+          <div class="form-group" style="flex:1;">
+            <label for="category">Category</label>
+            <select id="category" class="filter-select" style="width:100%;" required>
+              <option value="" disabled selected>Select category</option>
+              <option value="Exam">Exam</option>
+              <option value="Scholarship">Scholarship</option>
+              <option value="Placement">Placement</option>
+              <option value="Events">Events</option>
+              <option value="Circular">Circular</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Internship">Internship</option>
+              <option value="Seminar">Seminar</option>
+              <option value="Sports">Sports</option>
+              <option value="Cultural">Cultural</option>
+              <option value="General Announcement">General Announcement</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex:1;">
+            <label for="department">Department</label>
+            <select id="department" class="filter-select" style="width:100%;" required>
+              <option value="All Departments">All Departments</option>
+              <!-- Specific departments loaded dynamically from /api/admin/department -->
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="expiryDate">Expiry Date (optional)</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-calendar-xmark icon"></i>
+            <input type="date" id="expiryDate" />
+          </div>
+          <p style="font-size:12px; color:var(--color-text-secondary); margin-top:6px;">
+            Leave empty if this notice should never expire. After this date, students will no longer see it.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="file">Attach PDF / Image (optional)</label>
+          <div style="border: 2px dashed var(--color-border); border-radius: var(--radius-md); padding: 24px; text-align:center; cursor:pointer;" id="dropZone">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:26px; color:var(--color-primary); margin-bottom:8px;"></i>
+            <p style="font-size:14px; color:var(--color-text-secondary);">Click to upload PDF, JPG or PNG (max 5MB)</p>
+            <p id="fileNameLabel" style="font-size:13px; font-weight:600; margin-top:8px; color: var(--color-primary);"></p>
+            <input type="file" id="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" />
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:20px;">
+          <button type="submit" class="btn-primary" id="submitBtn" style="flex:1; justify-content:center;">
+            <i class="fa-solid fa-check"></i> <span id="submitBtnText">Publish Notice</span>
+          </button>
+          <a href="admin-notices.html" class="btn-secondary" style="flex:1; text-align:center;">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<script src="js/script.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
