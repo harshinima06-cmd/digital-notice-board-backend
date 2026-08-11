@@ -10,7 +10,7 @@ const sendNoticeEmail = async (recipientEmails, notice) => {
   try {
     const { data, error } = await resend.emails.send({
       from: "Digital Notice Board <onboarding@resend.dev>",
-      to: recipientEmails,
+      to: ["harshinima06@gmail.com"],
       subject: `New Notice: ${notice.title}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
