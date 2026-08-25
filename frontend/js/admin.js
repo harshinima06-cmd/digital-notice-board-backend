@@ -611,6 +611,13 @@ async function initStudentsPage() {
   });
 
   document.getElementById("addStudentForm").addEventListener("submit", handleAddStudent);
+
+  // ---------- Excel bulk upload ----------
+  document.getElementById("openExcelUploadBtn").addEventListener("click", () => {
+    document.getElementById("excelFileInput").click();
+  });
+
+  document.getElementById("excelFileInput").addEventListener("change", handleExcelUpload);
 }
 
 /**
@@ -719,6 +726,87 @@ async function handleAddStudent(e) {
   }
 }
 
+
+/**
+ * Handles Excel file selection - uploads it to the bulk-upload endpoint
+ * and displays a success/failure summary, then refreshes the table.
+ */
+async function handleExcelUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const statusBox = document.getElementById("excelUploadStatus");
+  const uploadBtn = document.getElementById("openExcelUploadBtn");
+
+  // Basic client-side file type check
+  const validExt = [".xlsx", ".xls"];
+  const isValid = validExt.some((ext) => file.name.toLowerCase().endsWith(ext));
+  if (!isValid) {
+    statusBox.style.display = "block";
+    statusBox.innerHTML = `<div class="form-error" style="display:block;">Only .xlsx or .xls files are allowed.</div>`;
+    e.target.value = ""; // reset so the same file can be re-selected
+    return;
+  }
+
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+
+  statusBox.style.display = "block";
+  statusBox.innerHTML = `<p style="color:var(--color-text-secondary);">Uploading and processing Excel file...</p>`;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const result = await apiRequest("/admin/students/bulk-upload", {
+      method: "POST",
+      body: formData,
+      isFormData: true,
+    });
+
+    const successCount = result.results.success.length;
+    const failedCount = result.results.failed.length;
+
+    let html = `<div style="padding:14px; border-radius:8px; background:#eafaf0; border:1px solid #b7e4c7; margin-bottom:10px;">
+      <strong>${result.message}</strong>
+    </div>`;
+
+    if (failedCount > 0) {
+      html += `<div style="max-height:200px; overflow-y:auto; font-size:13px;">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr style="text-align:left; color:var(--color-text-secondary);">
+              <th style="padding:6px;">Row</th>
+              <th style="padding:6px;">Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${result.results.failed
+              .map(
+                (f) => `
+              <tr style="border-top:1px solid #eee;">
+                <td style="padding:6px;">${f.row.Name || "-"} (${f.row.RegisterNumber || "-"})</td>
+                <td style="padding:6px; color:var(--color-danger);">${f.reason}</td>
+              </tr>`
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>`;
+    }
+
+    statusBox.innerHTML = html;
+
+    // Refresh the students table so newly added students appear immediately
+    await fetchAllStudents();
+  } catch (error) {
+    statusBox.innerHTML = `<div class="form-error" style="display:block;">Upload failed: ${error.message}</div>`;
+  } finally {
+    uploadBtn.disabled = false;
+    uploadBtn.innerHTML = '<i class="fa-solid fa-file-excel"></i> Upload Excel';
+    e.target.value = ""; // reset input so the same file can be re-uploaded if needed
+  }
+}
 // ==========================================================================
 // Functions below are used only on admin-profile.html
 // ==========================================================================

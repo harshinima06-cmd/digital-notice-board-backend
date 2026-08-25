@@ -4,7 +4,9 @@ import Department from "../models/Department.js";
 import Notice from "../models/Notice.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
-import Settings from "../models/Settings.js"; 
+import Settings from "../models/Settings.js";
+import XLSX from "xlsx";
+import fs from "fs";
 
 // ================== ADMIN SIGNUP ==================
 // Only ONE admin allowed for the entire college
@@ -12,7 +14,6 @@ export const registerAdmin = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
 
-    // Check if admin already exists (only 1 admin allowed)
     const adminExists = await Admin.findOne();
     if (adminExists) {
       return res.status(400).json({
@@ -20,11 +21,9 @@ export const registerAdmin = async (req, res) => {
       });
     }
 
-    // Hash the password before saving (never store plain text password)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new admin
     const admin = await Admin.create({
       name,
       email,
@@ -32,7 +31,6 @@ export const registerAdmin = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Send response with token
     res.status(201).json({
       _id: admin._id,
       name: admin.name,
@@ -49,19 +47,16 @@ export const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find admin by email
     const admin = await Admin.findOne({ email });
     if (!admin) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Compare entered password with hashed password in database
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Send response with token
     res.status(200).json({
       _id: admin._id,
       name: admin.name,
@@ -78,7 +73,6 @@ export const addDepartment = async (req, res) => {
   try {
     const { departmentName } = req.body;
 
-    // Check if department already exists
     const exists = await Department.findOne({ departmentName });
     if (exists) {
       return res.status(400).json({ message: "Department already exists" });
@@ -107,7 +101,6 @@ export const addStudent = async (req, res) => {
   try {
     const { name, registerNumber, email, department, password } = req.body;
 
-    // Check if student already exists (by email or register number)
     const studentExists = await Student.findOne({
       $or: [{ email }, { registerNumber }],
     });
@@ -117,7 +110,6 @@ export const addStudent = async (req, res) => {
       });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -125,7 +117,7 @@ export const addStudent = async (req, res) => {
       name,
       registerNumber,
       email,
-      department, // this should be a Department _id
+      department,
       password: hashedPassword,
     });
 
@@ -138,10 +130,9 @@ export const addStudent = async (req, res) => {
 // ================== GET ALL STUDENTS ==================
 export const getStudents = async (req, res) => {
   try {
-    // populate() replaces department ObjectId with actual department data
     const students = await Student.find()
       .populate("department", "departmentName")
-      .select("-password") // exclude password field from response
+      .select("-password")
       .sort({ createdAt: -1 });
 
     res.status(200).json(students);
@@ -153,14 +144,12 @@ export const getStudents = async (req, res) => {
 // ================== ADMIN DASHBOARD STATS ==================
 export const getDashboardStats = async (req, res) => {
   try {
-    // Run all counts in parallel for better performance
     const [totalNotices, totalStudents, totalDepartments] = await Promise.all([
       Notice.countDocuments(),
       Student.countDocuments(),
       Department.countDocuments(),
     ]);
 
-    // Get 5 most recent notices for the dashboard table
     const recentNotices = await Notice.find()
       .sort({ createdAt: -1 })
       .limit(5);
@@ -175,6 +164,7 @@ export const getDashboardStats = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 // ================== GET ADMIN PROFILE ==================
 export const getAdminProfile = async (req, res) => {
   try {
@@ -200,8 +190,6 @@ export const updateAdminProfile = async (req, res) => {
     admin.name = name || admin.name;
     admin.phone = phone || admin.phone;
 
-    // Email is intentionally NOT editable here (used for login identity)
-
     const updatedAdmin = await admin.save();
     res.status(200).json({
       _id: updatedAdmin._id,
@@ -217,7 +205,6 @@ export const updateAdminProfile = async (req, res) => {
 // ================== GET SETTINGS ==================
 export const getSettings = async (req, res) => {
   try {
-    // Find the single settings document, or create a default one if none exists yet
     let settings = await Settings.findOne();
     if (!settings) {
       settings = await Settings.create({});
@@ -257,6 +244,100 @@ export const updateSettings = async (req, res) => {
 
     const updated = await settings.save();
     res.status(200).json(updated);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// ================== BULK UPLOAD STUDENTS (Excel) ==================
+export const bulkUploadStudents = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Excel file is required" });
+    }
+
+    // Read the uploaded Excel file
+    const workbook = XLSX.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(sheet);
+
+    // Delete temp file - no longer needed after reading
+    fs.unlink(req.file.path, () => {});
+
+    if (!rows.length) {
+      return res.status(400).json({ message: "Excel file is empty" });
+    }
+
+    // Pre-fetch departments once (avoid DB call inside loop)
+    const departments = await Department.find();
+    const deptMap = {};
+    departments.forEach((d) => {
+      deptMap[d.departmentName.trim().toLowerCase()] = d;
+    });
+
+    const results = { success: [], failed: [] };
+
+    for (const row of rows) {
+      const name = row.Name?.toString().trim();
+      const registerNumber = row.RegisterNumber?.toString().trim();
+      const email = row.Email?.toString().trim().toLowerCase();
+      const deptName = row.Department?.toString().trim();
+
+      // Validate required fields
+      if (!name || !registerNumber || !email || !deptName) {
+        results.failed.push({
+          row,
+          reason: "Missing Name, RegisterNumber, Email, or Department",
+        });
+        continue;
+      }
+
+      // Find department
+      const dept = deptMap[deptName.toLowerCase()];
+      if (!dept) {
+        results.failed.push({ row, reason: `Department "${deptName}" not found` });
+        continue;
+      }
+
+      // Check duplicate (email OR registerNumber)
+      const existingStudent = await Student.findOne({
+        $or: [{ email }, { registerNumber }],
+      });
+      if (existingStudent) {
+        results.failed.push({
+          row,
+          reason: "Email or Register Number already exists",
+        });
+        continue;
+      }
+
+      // Password = RegisterNumber, hashed with bcrypt
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(registerNumber, salt);
+
+      try {
+        const student = await Student.create({
+          name,
+          registerNumber,
+          email,
+          department: dept._id,
+          password: hashedPassword,
+        });
+        results.success.push({
+          name: student.name,
+          registerNumber: student.registerNumber,
+          email: student.email,
+        });
+      } catch (err) {
+        results.failed.push({ row, reason: err.message });
+      }
+    }
+
+    res.status(200).json({
+      message: `${results.success.length} students added, ${results.failed.length} failed`,
+      results,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

@@ -48,16 +48,30 @@
       </div>
     </div>
 
-    <!-- ---------- Search + Add Student button ---------- -->
-    <div class="table-card" style="margin-bottom: 20px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
-        <div class="search-box">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="studentSearchInput" placeholder="Search by name or register number..." />
-        </div>
-        <button class="btn-primary" id="openAddStudentBtn"><i class="fa-solid fa-user-plus"></i> Add Student</button>
-      </div>
+    <!-- ---------- Search + Add Student + Upload Excel buttons ---------- -->
+<div class="table-card" style="margin-bottom: 20px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="studentSearchInput" placeholder="Search by name or register number..." />
     </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a href="assets/students_bulk_upload_sample.xlsx" download class="btn-secondary">
+        <i class="fa-solid fa-download"></i> Sample Excel
+      </a>
+      <button class="btn-secondary" id="openExcelUploadBtn">
+        <i class="fa-solid fa-file-excel"></i> Upload Excel
+      </button>
+      <button class="btn-primary" id="openAddStudentBtn"><i class="fa-solid fa-user-plus"></i> Add Student</button>
+    </div>
+  </div>
+
+  <!-- Hidden file input, triggered by the "Upload Excel" button -->
+  <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display:none;" />
+
+  <!-- Upload progress / result message -->
+  <div id="excelUploadStatus" style="margin-top:14px; display:none;"></div>
+</div>
 
     <!-- ---------- Students table ---------- -->
     <div class="table-card">
