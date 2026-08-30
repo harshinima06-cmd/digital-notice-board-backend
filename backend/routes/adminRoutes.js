@@ -12,6 +12,8 @@ import {
   getSettings,
   updateSettings,
   bulkUploadStudents,
+  getBatches,
+  deleteBatch,
 } from "../controllers/adminController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 import excelUpload from "../middleware/excelUploadMiddleware.js";
@@ -49,5 +51,9 @@ router.post(
   excelUpload.single("file"),
   bulkUploadStudents
 );
+
+// Batch management routes
+router.get("/batches", protect, adminOnly, getBatches);
+router.delete("/batches/:id", protect, adminOnly, deleteBatch);
 
 export default router;

@@ -2,6 +2,7 @@ import Admin from "../models/Admin.js";
 import Student from "../models/Student.js";
 import Department from "../models/Department.js";
 import Notice from "../models/Notice.js";
+import Batch from "../models/Batch.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 import Settings from "../models/Settings.js";
@@ -255,7 +256,7 @@ export const bulkUploadStudents = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "Excel file is required" });
     }
-
+    const originalFilename = req.file.originalname;
     // Read the uploaded Excel file
     const workbook = XLSX.readFile(req.file.path);
     const sheetName = workbook.SheetNames[0];
@@ -267,6 +268,26 @@ export const bulkUploadStudents = async (req, res) => {
 
     if (!rows.length) {
       return res.status(400).json({ message: "Excel file is empty" });
+    }
+
+     // ---------- Try to detect batch info from the filename ----------
+    // Expected pattern: DEPT_SECTION_STARTYEAR_ENDYEAR.xlsx (e.g. IT_A_2023_2027.xlsx)
+    const filenamePattern = /^([A-Za-z0-9]+)_([A-Za-z0-9]+)_(\d{4})_(\d{4})\.(xlsx|xls)$/i;
+    const filenameMatch = originalFilename.match(filenamePattern);
+
+    let batchId = null;
+    let batchInfo = null;
+
+    if (filenameMatch) {
+      // Pre-generate the ID so we can attach it to students as we create them,
+      // then create the Batch document using this same ID afterwards.
+      batchId = new mongoose.Types.ObjectId();
+      batchInfo = {
+        department: filenameMatch[1].toUpperCase(),
+        section: filenameMatch[2].toUpperCase(),
+        startYear: parseInt(filenameMatch[3], 10),
+        endYear: parseInt(filenameMatch[4], 10),
+      };
     }
 
     // Pre-fetch departments once (avoid DB call inside loop)
@@ -323,6 +344,7 @@ export const bulkUploadStudents = async (req, res) => {
           email,
           department: dept._id,
           password: hashedPassword,
+          batchId: batchId || null,
         });
         results.success.push({
           name: student.name,
@@ -334,9 +356,67 @@ export const bulkUploadStudents = async (req, res) => {
       }
     }
 
+    // ---------- Create the Batch record (only if filename matched AND at least 1 student was added) ----------
+    let batchCreated = null;
+    if (batchId && results.success.length > 0) {
+      batchCreated = await Batch.create({
+        _id: batchId,
+        originalFilename,
+        department: batchInfo.department,
+        section: batchInfo.section,
+        startYear: batchInfo.startYear,
+        endYear: batchInfo.endYear,
+        studentCount: results.success.length,
+      });
+    }
+
     res.status(200).json({
       message: `${results.success.length} students added, ${results.failed.length} failed`,
       results,
+      batch: batchCreated
+        ? {
+            id: batchCreated._id,
+            department: batchCreated.department,
+            section: batchCreated.section,
+            startYear: batchCreated.startYear,
+            endYear: batchCreated.endYear,
+            studentCount: batchCreated.studentCount,
+          }
+        : null,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// ================== GET ALL BATCHES ==================
+export const getBatches = async (req, res) => {
+  try {
+    const batches = await Batch.find().sort({ createdAt: -1 });
+    res.status(200).json(batches);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// ================== DELETE BATCH (and its students) ==================
+export const deleteBatch = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const batch = await Batch.findById(id);
+    if (!batch) {
+      return res.status(404).json({ message: "Batch not found" });
+    }
+
+    // Delete only students linked to this specific batch
+    const deleteResult = await Student.deleteMany({ batchId: id });
+
+    await batch.deleteOne();
+
+    res.status(200).json({
+      message: `Batch deleted successfully. ${deleteResult.deletedCount} student(s) removed.`,
+      deletedStudents: deleteResult.deletedCount,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });

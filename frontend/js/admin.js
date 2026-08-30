@@ -618,7 +618,13 @@ async function initStudentsPage() {
   });
 
   document.getElementById("excelFileInput").addEventListener("change", handleExcelUpload);
+
+  // ---------- Batch management ----------
+  await fetchAllBatches();
+  document.getElementById("cancelDeleteBatchBtn").addEventListener("click", closeDeleteBatchModal);
+  document.getElementById("confirmDeleteBatchBtn").addEventListener("click", confirmDeleteBatch);
 }
+
 
 /**
  * Loads departments into the "Department" dropdown inside the Add Student modal.
@@ -799,12 +805,98 @@ async function handleExcelUpload(e) {
 
     // Refresh the students table so newly added students appear immediately
     await fetchAllStudents();
+    await fetchAllBatches();
   } catch (error) {
     statusBox.innerHTML = `<div class="form-error" style="display:block;">Upload failed: ${error.message}</div>`;
   } finally {
     uploadBtn.disabled = false;
     uploadBtn.innerHTML = '<i class="fa-solid fa-file-excel"></i> Upload Excel';
     e.target.value = ""; // reset input so the same file can be re-uploaded if needed
+  }
+}
+
+// ==========================================================================
+// Batch management (Admin → Students page)
+// ==========================================================================
+
+let batchIdPendingDelete = null; // remembers which batch the delete modal is acting on
+
+/**
+ * Fetches all uploaded batches and renders the "Uploaded Batches" list.
+ */
+async function fetchAllBatches() {
+  const container = document.getElementById("batchesList");
+  try {
+    const batches = await apiRequest("/admin/batches", { method: "GET" });
+    renderBatchesList(batches);
+  } catch (error) {
+    container.innerHTML = `<p class="empty-state">Could not load batches: ${error.message}</p>`;
+  }
+}
+
+/**
+ * Renders the batch list with a Delete button for each batch.
+ */
+function renderBatchesList(batches) {
+  const container = document.getElementById("batchesList");
+
+  if (!batches || batches.length === 0) {
+    container.innerHTML = `<p class="empty-state">No batches uploaded yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = batches
+    .map((b) => {
+      const label = `${b.department} - Section ${b.section} - ${b.startYear}-${b.endYear}`;
+      return `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid #eee;">
+        <div>
+          <div style="font-weight:600;">${label}</div>
+          <div style="font-size:13px; color:var(--color-text-secondary);">
+            Students: ${b.studentCount} &nbsp;|&nbsp; Uploaded: ${formatDate(b.createdAt)}
+          </div>
+        </div>
+        <button class="btn-secondary" style="color:var(--color-danger); border-color:var(--color-danger);" onclick="openDeleteBatchModal('${b._id}', '${label}')">
+          <i class="fa-solid fa-trash"></i> Delete Batch
+        </button>
+      </div>`;
+    })
+    .join("");
+}
+
+/**
+ * Opens the delete-batch confirmation modal for the given batch.
+ */
+function openDeleteBatchModal(batchId, batchLabel) {
+  batchIdPendingDelete = batchId;
+  document.getElementById("deleteBatchMessage").textContent =
+    `Are you sure you want to delete all students belonging to ${batchLabel}?`;
+  document.getElementById("deleteBatchModal").style.display = "flex";
+}
+
+function closeDeleteBatchModal() {
+  batchIdPendingDelete = null;
+  document.getElementById("deleteBatchModal").style.display = "none";
+}
+
+/**
+ * Calls the DELETE API for the batch confirmed by the user,
+ * then refreshes both the batches list and the students table.
+ */
+async function confirmDeleteBatch() {
+  if (!batchIdPendingDelete) return;
+
+  try {
+    const result = await apiRequest(`/admin/batches/${batchIdPendingDelete}`, {
+      method: "DELETE",
+    });
+    alert(result.message);
+    await fetchAllBatches();
+    await fetchAllStudents();
+  } catch (error) {
+    alert(`Could not delete batch: ${error.message}`);
+  } finally {
+    closeDeleteBatchModal();
   }
 }
 // ==========================================================================

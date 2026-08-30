@@ -36,6 +36,12 @@ const studentSchema = new mongoose.Schema(
         ref: "Notice",
       },
     ],
+
+    batchId: {                          // 👈 NEW FIELD
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Batch",
+      default: null,
+    },
   },
   {
     timestamps: true,
