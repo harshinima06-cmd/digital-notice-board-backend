@@ -8,6 +8,7 @@ import generateToken from "../utils/generateToken.js";
 import Settings from "../models/Settings.js";
 import XLSX from "xlsx";
 import fs from "fs";
+import mongoose from "mongoose";
 
 // ================== ADMIN SIGNUP ==================
 // Only ONE admin allowed for the entire college
