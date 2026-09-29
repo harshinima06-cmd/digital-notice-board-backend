@@ -3,13 +3,14 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import dns from "dns";
 
 import connectDB from "./config/db.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import noticeRoutes from "./routes/noticeRoutes.js";
 
-
+dns.setDefaultResultOrder("ipv4first");
 
 // Connect to MongoDB
 connectDB();
