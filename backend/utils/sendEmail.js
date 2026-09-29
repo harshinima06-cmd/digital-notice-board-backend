@@ -1,18 +1,40 @@
 import nodemailer from "nodemailer";
+import dns from "dns";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  family: 4,  
-  connectionTimeout: 10000,   // 👈 ADD: 10 sec max to connect
-  greetingTimeout: 10000,     // 👈 ADD
-  socketTimeout: 10000,    
-});
+const SMTP_HOST = "smtp.gmail.com";
+const SMTP_PORT = 587;
+
+let cachedTransporter = null;
+
+/**
+ * Creates (and caches) a transporter that connects directly to Gmail's
+ * IPv4 address, bypassing hostname resolution — Render cannot route
+ * outbound IPv6 traffic, which was causing ENETUNREACH errors.
+ */
+const getTransporter = async () => {
+  if (cachedTransporter) return cachedTransporter;
+
+  const addresses = await dns.promises.resolve4(SMTP_HOST);
+  const ipv4Host = addresses[0];
+
+  cachedTransporter = nodemailer.createTransport({
+    host: ipv4Host,
+    port: SMTP_PORT,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    tls: {
+      servername: SMTP_HOST, // keep certificate validation matching the real hostname
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
+  });
+
+  return cachedTransporter;
+};
 
 /**
  * Sends an email notifying students about a new notice,
@@ -21,7 +43,6 @@ const transporter = nodemailer.createTransport({
 const sendNoticeEmail = async (recipientEmails, notice) => {
   if (!recipientEmails || recipientEmails.length === 0) return;
 
-  // Build the direct link to this notice's detail page
   const noticeUrl = `${process.env.FRONTEND_URL}/student-notice-detail.html?id=${notice._id}`;
 
   const mailOptions = {
@@ -58,6 +79,7 @@ const sendNoticeEmail = async (recipientEmails, notice) => {
   };
 
   try {
+    const transporter = await getTransporter();
     await transporter.sendMail(mailOptions);
     console.log(`✅ Notice email sent to ${recipientEmails.length} student(s)`);
   } catch (error) {
