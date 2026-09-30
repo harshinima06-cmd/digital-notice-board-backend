@@ -423,3 +423,21 @@ export const deleteBatch = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+// ================== DELETE SINGLE STUDENT ==================
+export const deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    await student.deleteOne();
+
+    res.status(200).json({ message: "Student deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

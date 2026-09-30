@@ -32,7 +32,7 @@ const batchSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // createdAt = "Uploaded" date
+    timestamps: true,
   }
 );
 

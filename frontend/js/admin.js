@@ -824,7 +824,7 @@ async function handleExcelUpload(e) {
 // Batch management (Admin → Students page)
 // ==========================================================================
 
-let batchIdPendingDelete = null; // remembers which batch the delete modal is acting on
+
 
 /**
  * Fetches all uploaded batches and renders the "Uploaded Batches" list.
