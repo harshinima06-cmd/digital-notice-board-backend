@@ -14,6 +14,7 @@ import {
   bulkUploadStudents,
   getBatches,
   deleteBatch,
+  deleteStudent,
 } from "../controllers/adminController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 import excelUpload from "../middleware/excelUploadMiddleware.js";
@@ -42,6 +43,7 @@ router.get("/department", protect, adminOnly, getDepartments);
 // Student management routes
 router.post("/student", protect, adminOnly, addStudent);
 router.get("/student", protect, adminOnly, getStudents);
+router.delete("/student/:id", protect, adminOnly, deleteStudent);
 
 // Bulk upload students via Excel
 router.post(

@@ -655,7 +655,7 @@ async function fetchAllStudents() {
     allStudentsCache = await apiRequest("/admin/student", { method: "GET" });
     renderStudentsTable();
   } catch (error) {
-    tableBody.innerHTML = `<tr><td colspan="4" class="empty-state">Could not load students: ${error.message}</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" class="empty-state">Could not load students: ${error.message}</td></tr>`;
   }
 }
 
@@ -675,7 +675,7 @@ function renderStudentsTable() {
   );
 
   if (filtered.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="4" class="empty-state">No students found.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" class="empty-state">No students found.</td></tr>`;
     countLabel.textContent = "";
     return;
   }
@@ -688,6 +688,11 @@ function renderStudentsTable() {
         <td>${s.name}</td>
         <td>${s.department?.departmentName || "-"}</td>
         <td>${s.email}</td>
+        <td>
+          <button class="btn-view" style="color:var(--color-danger); border-color:var(--color-danger);" onclick="handleDeleteStudent('${s._id}', '${s.name}')">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
       </tr>`
     )
     .join("");
@@ -1009,5 +1014,89 @@ async function handleSettingsSubmit(e) {
     showError("settingsError", error.message);
   } finally {
     submitBtn.disabled = false;
+  }
+}
+
+// ==========================================================================
+// Individual student delete + Batch management
+// ==========================================================================
+
+let batchIdPendingDelete = null;
+
+async function handleDeleteStudent(studentId, studentName) {
+  const confirmed = confirm(`Are you sure you want to delete ${studentName}?`);
+  if (!confirmed) return;
+
+  try {
+    await apiRequest(`/admin/student/${studentId}`, { method: "DELETE" });
+    await fetchAllStudents();
+  } catch (error) {
+    alert(`Could not delete student: ${error.message}`);
+  }
+}
+
+async function fetchAllBatches() {
+  const container = document.getElementById("batchesList");
+  try {
+    const batches = await apiRequest("/admin/batches", { method: "GET" });
+    renderBatchesList(batches);
+  } catch (error) {
+    container.innerHTML = `<p class="empty-state">Could not load batches: ${error.message}</p>`;
+  }
+}
+
+function renderBatchesList(batches) {
+  const container = document.getElementById("batchesList");
+
+  if (!batches || batches.length === 0) {
+    container.innerHTML = `<p class="empty-state">No batches uploaded yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = batches
+    .map((b) => {
+      const label = `${b.department} - Section ${b.section} - ${b.startYear}-${b.endYear}`;
+      return `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid #eee;">
+        <div>
+          <div style="font-weight:600;">${label}</div>
+          <div style="font-size:13px; color:var(--color-text-secondary);">
+            Students: ${b.studentCount} &nbsp;|&nbsp; Uploaded: ${formatDate(b.createdAt)}
+          </div>
+        </div>
+        <button class="btn-secondary" style="color:var(--color-danger); border-color:var(--color-danger);" onclick="openDeleteBatchModal('${b._id}', '${label}')">
+          <i class="fa-solid fa-trash"></i> Delete Batch
+        </button>
+      </div>`;
+    })
+    .join("");
+}
+
+function openDeleteBatchModal(batchId, batchLabel) {
+  batchIdPendingDelete = batchId;
+  document.getElementById("deleteBatchMessage").textContent =
+    `Are you sure you want to delete all students belonging to ${batchLabel}?`;
+  document.getElementById("deleteBatchModal").style.display = "flex";
+}
+
+function closeDeleteBatchModal() {
+  batchIdPendingDelete = null;
+  document.getElementById("deleteBatchModal").style.display = "none";
+}
+
+async function confirmDeleteBatch() {
+  if (!batchIdPendingDelete) return;
+
+  try {
+    const result = await apiRequest(`/admin/batches/${batchIdPendingDelete}`, {
+      method: "DELETE",
+    });
+    alert(result.message);
+    await fetchAllBatches();
+    await fetchAllStudents();
+  } catch (error) {
+    alert(`Could not delete batch: ${error.message}`);
+  } finally {
+    closeDeleteBatchModal();
   }
 }
