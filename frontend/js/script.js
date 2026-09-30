@@ -102,9 +102,8 @@ function saveSession(data, role) {
  * Clear session and redirect to the correct login page
  */
 function logout() {
-  const role = localStorage.getItem("role");
   localStorage.clear();
-  window.location.href = role === "admin" ? "admin-login.html" : "student-login.html";
+  window.location.href = "index.html";
 }
 
 /**
