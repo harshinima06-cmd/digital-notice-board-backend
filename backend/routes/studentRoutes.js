@@ -5,6 +5,7 @@ import {
   toggleBookmark,
   getBookmarkedNotices,
   getBookmarkIds,
+  recordNoticeView,
 } from "../controllers/studentController.js";
 import { protect, studentOnly } from "../middleware/authMiddleware.js";
 
@@ -18,5 +19,6 @@ router.get("/profile", protect, studentOnly, getStudentProfile);
 router.put("/bookmark/:noticeId", protect, studentOnly, toggleBookmark);
 router.get("/bookmarks", protect, studentOnly, getBookmarkedNotices);
 router.get("/bookmark-ids", protect, studentOnly, getBookmarkIds);
+router.post("/view/:noticeId", protect, studentOnly, recordNoticeView);
 
 export default router;

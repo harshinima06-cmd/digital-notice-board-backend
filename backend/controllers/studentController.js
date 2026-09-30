@@ -1,6 +1,7 @@
 import Student from "../models/Student.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
+import NoticeView from "../models/NoticeView.js";
 
 // ================== STUDENT LOGIN ==================
 // Student can login using Register Number OR Email + Password
@@ -114,6 +115,22 @@ export const getBookmarkIds = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
     res.status(200).json(student.bookmarkedNotices);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+// ================== RECORD NOTICE VIEW ==================
+export const recordNoticeView = async (req, res) => {
+  try {
+    const day = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+    await NoticeView.updateOne(
+      { notice: req.params.noticeId, student: req.user.id, day },
+      { $setOnInsert: { notice: req.params.noticeId, student: req.user.id, day } },
+      { upsert: true }
+    );
+
+    res.status(200).json({ message: "View recorded" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }

@@ -9,6 +9,7 @@ import Settings from "../models/Settings.js";
 import XLSX from "xlsx";
 import fs from "fs";
 import mongoose from "mongoose";
+import NoticeView from "../models/NoticeView.js";
 
 // ================== ADMIN SIGNUP ==================
 // Only ONE admin allowed for the entire college
@@ -156,10 +157,14 @@ export const getDashboardStats = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(5);
 
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+    const todayViews = await NoticeView.countDocuments({ day: today });
+
     res.status(200).json({
       totalNotices,
       totalStudents,
       totalDepartments,
+      todayViews,
       recentNotices,
     });
   } catch (error) {

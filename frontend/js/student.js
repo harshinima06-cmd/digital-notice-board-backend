@@ -467,6 +467,8 @@ async function initNoticeDetailPage() {
     card.innerHTML = `<p class="empty-state">No notice specified.</p>`;
     return;
   }
+  // record this view (fire and forget, never blocks the page)
+  apiRequest(`/student/view/${noticeId}`, { method: "POST" }).catch(() => {});
 
   try {
     // We reuse /notice/student (the same secure, department-filtered list)
